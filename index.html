@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petualangan Enzim</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .cell {
+      @apply w-24 h-24 bg-white border-2 border-gray-700 flex items-center justify-center text-center relative shadow-md;
+    }
+    .pion {
+      @apply w-8 h-8 bg-red-600 text-white font-bold rounded-full flex items-center justify-center absolute top-1 left-1;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-white min-h-screen p-6">
+  <h1 class="text-3xl font-bold text-center mb-6 text-blue-700">🎲 Petualangan Enzim - Sistem Pencernaan</h1>
+
+  <div class="grid grid-cols-4 gap-4 justify-center max-w-md mx-auto" id="board">
+    <div class="cell">Mulut</div>
+    <div class="cell">Kerongkongan</div>
+    <div class="cell">Lambung</div>
+    <div class="cell">Usus Halus</div>
+    <div class="cell">Hati</div>
+    <div class="cell">Pankreas</div>
+    <div class="cell">Usus Besar</div>
+    <div class="cell">Rektum</div>
+  </div>
+
+  <div class="text-center mt-8 space-x-4">
+    <button onclick="rollDice()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">🎲 Lempar Dadu</button>
+    <button onclick="drawCard()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">📄 Ambil Kartu Soal</button>
+  </div>
+
+  <div class="max-w-md mx-auto mt-6 bg-white rounded-lg shadow p-4">
+    <h2 class="font-semibold mb-2 text-lg">🧠 Kartu Soal</h2>
+    <div id="questionBox" class="text-gray-700">Klik tombol untuk mulai!</div>
+  </div>
+
+  <div class="text-center mt-4 font-semibold">
+    Posisi: <span id="position">0</span> | Skor: <span id="score">0</span> | Waktu: <span id="timer">60</span> detik
+  </div>
+
+  <script>
+    const questions = [
+      "Apa fungsi enzim ptialin di mulut?",
+      "Mengapa makanan perlu dicerna secara mekanik dan kimiawi di lambung?",
+      "Apa peran usus halus dalam sistem pencernaan?",
+      "Apa fungsi hati dalam proses pencernaan?",
+      "Enzim apa saja yang dihasilkan oleh pankreas?",
+      "Apa yang diserap oleh usus besar?",
+      "Apa itu rektum dan apa fungsinya dalam sistem ekskresi makanan?",
+      "Sebutkan urutan organ pencernaan dari awal hingga akhir!"
+    ];
+
+    let currentPos = 0;
+    let score = 0;
+    let timer = 60;
+
+    const board = document.getElementById("board");
+    const pion = document.createElement("div");
+    pion.className = "pion";
+    pion.innerText = "P";
+    board.children[currentPos].appendChild(pion);
+
+    function rollDice() {
+      const steps = Math.floor(Math.random() * 2) + 1;
+      movePion(steps);
+    }
+
+    function movePion(steps) {
+      currentPos += steps;
+      if (currentPos >= board.children.length) {
+        currentPos = board.children.length - 1;
+        alert("Selamat! Kamu menyelesaikan sistem pencernaan.");
+        clearInterval(timerInterval);
+      }
+      updateBoard();
+    }
+
+    function updateBoard() {
+      document.getElementById("position").innerText = currentPos;
+      board.querySelectorAll('.pion').forEach(p => p.remove());
+      board.children[currentPos].appendChild(pion);
+    }
+
+    function drawCard() {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      document.getElementById("questionBox").innerText = questions[randomIndex];
+      score += 10;
+      document.getElementById("score").innerText = score;
+    }
+
+    function updateTimer() {
+      timer--;
+      document.getElementById("timer").innerText = timer;
+      if (timer <= 0) {
+        clearInterval(timerInterval);
+        alert("Waktu habis! Skor akhir: " + score);
+      }
+    }
+
+    const timerInterval = setInterval(updateTimer, 1000);
+  </script>
+</body>
+</html>
